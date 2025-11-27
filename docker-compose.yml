@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_DB: automobility_db
+      POSTGRES_PASSWORD: password
+
+  backend:
+    build: ./Backend
+    container_name: backend
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/automobility_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    ports:
+      - 8080:8080
+
+  frontend:
+    build: ./Frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - 80:80
+
+  adminer:
+    image: adminer
+    ports:
+      - 8088:8080
+    depends_on:
+      - postgres
